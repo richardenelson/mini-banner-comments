@@ -1,0 +1,16 @@
+{
+    "printWidth": 120,
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": true,
+    "singleQuote": false,
+    "quoteProps": "preserve",
+    "overrides": [
+        {
+            "files": "*Defs.ts",
+            "options": {
+                "printWidth": 200
+            }
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+dist/
+node_modules/
+*.css
+*.d.ts
+*.hbs
+*.html
+*.json
+*.md
+*.scss
