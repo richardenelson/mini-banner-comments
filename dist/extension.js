@@ -19,73 +19,69 @@ const headerOptions = {
     h1: {
         id: "h1",
         label: "Header 1",
-        prefix: "//===== ",
-        suffix: " =====//",
+        prefix: "//=====",
+        suffix: "=====//",
+        spacer: " ",
         char: "=",
         length: 60,
     },
     h2: {
         id: "h2",
         label: "Header 2",
-        prefix: "//----- ",
-        suffix: " -----//",
+        prefix: "//-----",
+        suffix: "-----//",
+        spacer: " ",
         char: "-",
         length: 60,
     },
     h3: {
         id: "h3",
         label: "Header 3",
-        prefix: "// ",
-        suffix: " //",
+        prefix: "//",
+        suffix: "//",
+        spacer: " ",
     },
 };
 const headerArray = Object.values(headerOptions);
-async function showInsertHeader(editor, edit) {
-    const selection = await vscode_1.window.showQuickPick(headerArray.map((header) => header.label, {
+async function showInsertHeader() {
+    vscode_1.window
+        .showQuickPick(headerArray.map((header) => header.label, {
         placeHolder: "Please choose a header option",
-        step: 1,
-        totalSteps: 2,
-        // onDidSelectItem: async (item: string) => {
-        //     const text = await window.showInputBox({
-        //         value: "abcdef",
-        //         valueSelection: [2, 4],
-        //         placeHolder: "For example: fedcba. But not: 123",
-        //         validateInput: (text) => {
-        //             window.showInformationMessage(`Validating: ${text}`);
-        //             return text === "123" ? "Not 123!" : null;
-        //         },
-        //     });
-        //     window.showInformationMessage(`Got: ${text}`);
-        // },
-    }));
-    if (selection) {
-        vscode_1.window.showInformationMessage("Dude");
-        vscode_1.window.showInformationMessage(`Text is ${generateHeader("hello", headerOptions[selection])}`);
-        const text = await vscode_1.window.showInputBox({
-            value: "",
-            placeHolder: "For example: fedcba. But not: 123",
-            // validateInput: (text) => {
-            //     return text === "123" ? "Not 123!" : null;
-            // },
-        });
-        if (text && text !== "") {
-            const headerOption = headerOptions[selection];
-            //edit.insert(editor.selection.active, generateHeader(text, headerOption));
-            vscode_1.window.showInformationMessage(`Text is ${generateHeader(text, headerOption)}`);
-            edit.insert(editor.selection.active, text);
+    }))
+        .then(async (selection) => {
+        if (selection) {
+            const content = await vscode_1.window.showInputBox({
+                placeHolder: "Text to show in header",
+                prompt: "This will be automatically converted to uppercase.",
+            });
+            if (content) {
+                vscode_1.window.showInformationMessage(content);
+                const editor = vscode_1.window.activeTextEditor;
+                console.log(selection, content);
+                if (editor) {
+                    vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
+                        e.edit((edit) => {
+                            edit.insert(editor.selection.active, generateHeader(content, selection));
+                        });
+                    });
+                }
+            }
         }
-    }
-    // window.showInformationMessage(`Got: ${result}`);
+    });
 }
 exports.showInsertHeader = showInsertHeader;
-function generateHeader(text, headerOption) {
-    const h = headerOption;
-    let fill = "";
-    if (h.char && h.length) {
-        const count = Math.max(0, h.length - `${h.prefix}${text}${h.suffix}`.length);
-        fill = h.char.repeat(count);
+function generateHeader(text, headerLabel) {
+    text = text.trim();
+    const h = headerArray.find((item) => item.label === headerLabel);
+    if (h) {
+        let fill = "";
+        if (h.char && h.length) {
+            const count = Math.max(0, h.length - `${h.prefix}${h.spacer}${text}${h.spacer}${h.suffix}`.length);
+            fill = h.char.repeat(count);
+        }
+        return `${h.prefix}${h.spacer}${text.toUpperCase()}${h.spacer}${fill}${h.suffix}`;
     }
-    return `${h.prefix}${text}${fill}${h.suffix}`;
+    return "";
 }
 
 
@@ -131,7 +127,7 @@ function activate(context) {
     const dividerDisposible = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.commentDivider", (editor, edit) => {
         edit.insert(editor.selection.active, `/******************************************************************************/`);
     });
-    const headerDisposable = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.commentHeader", async (editor, edit) => (0, insertHeader_1.showInsertHeader)(editor, edit));
+    const headerDisposable = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.commentHeader", async () => (0, insertHeader_1.showInsertHeader)());
     context.subscriptions.push(dividerDisposible, headerDisposable);
 }
 exports.activate = activate;

@@ -13,9 +13,8 @@ export function activate(context: ExtensionContext) {
         }
     );
 
-    const headerDisposable = commands.registerTextEditorCommand(
-        "mini-banner-comments.commentHeader",
-        async (editor, edit) => showInsertHeader(editor, edit)
+    const headerDisposable = commands.registerTextEditorCommand("mini-banner-comments.commentHeader", async () =>
+        showInsertHeader()
     );
 
     context.subscriptions.push(dividerDisposible, headerDisposable);
