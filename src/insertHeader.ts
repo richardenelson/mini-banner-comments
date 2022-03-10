@@ -42,32 +42,29 @@ const headerOptions: { [key: string]: IHeaderOption } = {
 const headerArray = Object.values(headerOptions);
 
 export async function showInsertHeader() {
-    window
-        .showQuickPick(
-            headerArray.map((header) => header.label, {
-                placeHolder: "Please choose a header option",
-            })
-        )
-        .then(async (selection) => {
-            if (selection) {
-                const content = await window.showInputBox({
-                    placeHolder: "Text to show in header",
-                    prompt: "This will be automatically converted to uppercase.",
-                });
-
-                if (content) {
-                    const editor = window.activeTextEditor;
-
-                    if (editor) {
-                        window.showTextDocument(editor.document, 1, false).then((e) => {
-                            e.edit((edit) => {
-                                edit.insert(editor.selection.active, generateHeader(content, selection));
-                            });
-                        });
-                    }
-                }
-            }
+    const selection = await window.showQuickPick(
+        headerArray.map((header) => header.label, {
+            placeHolder: "Please choose a header option",
+        })
+    );
+    if (selection) {
+        const content = await window.showInputBox({
+            placeHolder: "Text to show in header",
+            prompt: "This will be automatically converted to uppercase.",
         });
+
+        if (content) {
+            const editor = window.activeTextEditor;
+
+            if (editor) {
+                window.showTextDocument(editor.document, 1, false).then((e) => {
+                    e.edit((edit) => {
+                        edit.insert(editor.selection.active, generateHeader(content, selection));
+                    });
+                });
+            }
+        }
+    }
 }
 
 function generateHeader(text: string, headerLabel: string): string {

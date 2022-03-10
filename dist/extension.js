@@ -44,28 +44,25 @@ const headerOptions = {
 };
 const headerArray = Object.values(headerOptions);
 async function showInsertHeader() {
-    vscode_1.window
-        .showQuickPick(headerArray.map((header) => header.label, {
+    const selection = await vscode_1.window.showQuickPick(headerArray.map((header) => header.label, {
         placeHolder: "Please choose a header option",
-    }))
-        .then(async (selection) => {
-        if (selection) {
-            const content = await vscode_1.window.showInputBox({
-                placeHolder: "Text to show in header",
-                prompt: "This will be automatically converted to uppercase.",
-            });
-            if (content) {
-                const editor = vscode_1.window.activeTextEditor;
-                if (editor) {
-                    vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
-                        e.edit((edit) => {
-                            edit.insert(editor.selection.active, generateHeader(content, selection));
-                        });
+    }));
+    if (selection) {
+        const content = await vscode_1.window.showInputBox({
+            placeHolder: "Text to show in header",
+            prompt: "This will be automatically converted to uppercase.",
+        });
+        if (content) {
+            const editor = vscode_1.window.activeTextEditor;
+            if (editor) {
+                vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
+                    e.edit((edit) => {
+                        edit.insert(editor.selection.active, generateHeader(content, selection));
                     });
-                }
+                });
             }
         }
-    });
+    }
 }
 exports.showInsertHeader = showInsertHeader;
 function generateHeader(text, headerLabel) {
