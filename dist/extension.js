@@ -55,9 +55,7 @@ async function showInsertHeader() {
                 prompt: "This will be automatically converted to uppercase.",
             });
             if (content) {
-                vscode_1.window.showInformationMessage(content);
                 const editor = vscode_1.window.activeTextEditor;
-                console.log(selection, content);
                 if (editor) {
                     vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
                         e.edit((edit) => {

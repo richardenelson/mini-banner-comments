@@ -1,5 +1,6 @@
 import { window } from "vscode";
 
+/******************************************************************************/
 interface IHeaderOption {
     id: string;
     label: string;
@@ -55,9 +56,7 @@ export async function showInsertHeader() {
                 });
 
                 if (content) {
-                    window.showInformationMessage(content);
                     const editor = window.activeTextEditor;
-                    console.log(selection, content);
 
                     if (editor) {
                         window.showTextDocument(editor.document, 1, false).then((e) => {
