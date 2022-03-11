@@ -23,8 +23,8 @@
         "keybindings": [
             {
                 "command": "mini-banner-comments.miniBanner",
-                "key": "ctrl+shift+a",
-                "mac": "cmd+shift+a"
+                "key": "ctrl+shift+/",
+                "mac": "cmd+shift+/"
             }
         ]
 	},
