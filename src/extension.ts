@@ -1,23 +1,13 @@
 import { ExtensionContext, commands, window } from "vscode";
-import { showInsertHeader } from "./insertHeader";
+import { showInsertHeader } from "./insertBanner";
 
 /******************************************************************************/
 export function activate(context: ExtensionContext) {
-    const dividerDisposible = commands.registerTextEditorCommand(
-        "mini-banner-comments.commentDivider",
-        (editor, edit) => {
-            edit.insert(
-                editor.selection.active,
-                `/******************************************************************************/`
-            );
-        }
-    );
-
-    const headerDisposable = commands.registerTextEditorCommand("mini-banner-comments.commentHeader", async () =>
+    const disposable = commands.registerTextEditorCommand("mini-banner-comments.miniBanner", async () =>
         showInsertHeader()
     );
 
-    context.subscriptions.push(dividerDisposible, headerDisposable);
+    context.subscriptions.push(disposable);
 }
 
 export function deactivate() {}

@@ -15,66 +15,84 @@ module.exports = require("vscode");
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.showInsertHeader = void 0;
 const vscode_1 = __webpack_require__(1);
-const headerOptions = {
+const bannerOptions = {
+    div: {
+        label: "Divider",
+        prefix: "/*",
+        suffix: "*/",
+        spacer: "",
+        char: "*",
+        length: 80,
+    },
     h1: {
-        id: "h1",
         label: "Header 1",
         prefix: "//=====",
         suffix: "=====//",
         spacer: " ",
+        input: true,
         char: "=",
         length: 60,
     },
     h2: {
-        id: "h2",
         label: "Header 2",
         prefix: "//-----",
         suffix: "-----//",
         spacer: " ",
+        input: true,
         char: "-",
         length: 60,
     },
     h3: {
-        id: "h3",
         label: "Header 3",
         prefix: "//",
         suffix: "//",
         spacer: " ",
+        input: true,
     },
 };
-const headerArray = Object.values(headerOptions);
+const bannerArray = Object.values(bannerOptions);
 async function showInsertHeader() {
-    const selection = await vscode_1.window.showQuickPick(headerArray.map((header) => header.label, {
-        placeHolder: "Please choose a header option",
+    const selection = await vscode_1.window.showQuickPick(bannerArray.map((banner) => banner.label, {
+        placeHolder: "Please choose a banner option",
     }));
     if (selection) {
-        const content = await vscode_1.window.showInputBox({
-            placeHolder: "Text to show in header",
-            prompt: "This will be automatically converted to uppercase.",
-        });
-        if (content) {
-            const editor = vscode_1.window.activeTextEditor;
-            if (editor) {
-                vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
-                    e.edit((edit) => {
-                        edit.insert(editor.selection.active, generateHeader(content, selection));
-                    });
+        const banner = bannerArray.find((item) => item.label === selection);
+        if (banner) {
+            if (banner.input) {
+                const content = await vscode_1.window.showInputBox({
+                    placeHolder: "Text to show in banner",
+                    prompt: "This will be automatically converted to uppercase.",
                 });
+                if (content)
+                    insertBanner(content, banner);
+            }
+            else {
+                insertBanner("", banner);
             }
         }
     }
 }
 exports.showInsertHeader = showInsertHeader;
-function generateHeader(text, headerLabel) {
+function insertBanner(value, bannerOption) {
+    const editor = vscode_1.window.activeTextEditor;
+    if (editor) {
+        vscode_1.window.showTextDocument(editor.document, 1, false).then((e) => {
+            e.edit((edit) => {
+                edit.insert(editor.selection.active, generateBanner(value, bannerOption));
+            });
+        });
+    }
+}
+function generateBanner(text, bannerOption) {
     text = text.trim();
-    const h = headerArray.find((item) => item.label === headerLabel);
-    if (h) {
+    const o = bannerOption;
+    if (o) {
         let fill = "";
-        if (h.char && h.length) {
-            const count = Math.max(0, h.length - `${h.prefix}${h.spacer}${text}${h.spacer}${h.suffix}`.length);
-            fill = h.char.repeat(count);
+        if (o.char && o.length) {
+            const count = Math.max(0, o.length - `${o.prefix}${o.spacer}${text}${o.spacer}${o.suffix}`.length);
+            fill = o.char.repeat(count);
         }
-        return `${h.prefix}${h.spacer}${text.toUpperCase()}${h.spacer}${fill}${h.suffix}`;
+        return `${o.prefix}${o.spacer}${text.toUpperCase()}${o.spacer}${fill}${o.suffix}`;
     }
     return "";
 }
@@ -116,14 +134,11 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.deactivate = exports.activate = void 0;
 const vscode_1 = __webpack_require__(1);
-const insertHeader_1 = __webpack_require__(2);
+const insertBanner_1 = __webpack_require__(2);
 /******************************************************************************/
 function activate(context) {
-    const dividerDisposible = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.commentDivider", (editor, edit) => {
-        edit.insert(editor.selection.active, `/******************************************************************************/`);
-    });
-    const headerDisposable = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.commentHeader", async () => (0, insertHeader_1.showInsertHeader)());
-    context.subscriptions.push(dividerDisposible, headerDisposable);
+    const disposable = vscode_1.commands.registerTextEditorCommand("mini-banner-comments.miniBanner", async () => (0, insertBanner_1.showInsertHeader)());
+    context.subscriptions.push(disposable);
 }
 exports.activate = activate;
 function deactivate() { }
