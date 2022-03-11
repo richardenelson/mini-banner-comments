@@ -35,8 +35,6 @@ const bannerOptions: { [key: string]: IBannerOption } = {
         suffix: "-----//",
         spacer: " ",
         input: true,
-        char: "-",
-        length: 60,
     },
     h3: {
         label: "Header 3",

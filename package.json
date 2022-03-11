@@ -1,7 +1,7 @@
 {
 	"name": "mini-banner-comments",
 	"displayName": "Mini Banner Comments",
-	"description": "Easily inserts minimalist ASCII comment headers into code.",
+	"description": "Easily inserts minimalist ASCII header and divider comments into code.",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.65.0"
@@ -23,8 +23,8 @@
         "keybindings": [
             {
                 "command": "mini-banner-comments.miniBanner",
-                "key": "ctrl+shift+/",
-                "mac": "cmd+shift+/"
+                "key": "ctrl+shift+a",
+                "mac": "cmd+shift+a"
             }
         ]
 	},
